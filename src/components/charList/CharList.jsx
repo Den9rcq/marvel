@@ -12,16 +12,13 @@ class CharList extends Component {
     }
 
     componentDidMount() {
-        this.updateCharsList()
-    }
-
-    marvelService = new MarvelService()
-
-    updateCharsList = async () => {
         this.marvelService.getAllCharacters()
             .then(charsList => this.onCharsLoaded(charsList))
             .catch(this.onError)
     }
+
+    marvelService = new MarvelService()
+
 
     onCharsLoaded = (charsList) => this.setState({
         charsList: charsList.map(item => ({ ...item, active: false })),
@@ -44,9 +41,9 @@ class CharList extends Component {
             }
         })
     }
-    formattedPicture = (picture) => {
+    formattedPicture = (picture, property) => {
         const notPicture = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-        return picture === notPicture ? { objectFit: "fill" } : null
+        return picture === notPicture ? { objectFit: property } : null
     }
 
     render() {
@@ -63,17 +60,15 @@ class CharList extends Component {
             >
                 <img
                     src={thumbnail}
-                    alt="abyss"
-                    style={this.formattedPicture(thumbnail)}
+                    alt={name}
+                    style={this.formattedPicture(thumbnail, "fill")}
                 />
                 <div className="char__name">{name}</div>
             </li>
         ))
         return (
             <div className="char__list">
-                <ul className="char__grid">
-                    {spinner || errorMessage || charsListComponent}
-                </ul>
+                {spinner || errorMessage || <ul className="char__grid">{charsListComponent}</ul>}
                 <button className="button button__main button__long">
                     <div className="inner">load more</div>
                 </button>
