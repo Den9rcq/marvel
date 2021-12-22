@@ -26,6 +26,11 @@ class RandomChar extends Component {
         char,
         loading: false
     });
+    onCharLoading = () => {
+        this.setState({
+            loading: true
+        })
+    }
 
     onError = () => this.setState({
         loading: false,
@@ -34,6 +39,7 @@ class RandomChar extends Component {
 
     updateChar = async () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
+        this.onCharLoading()
         await this.marvelService.getCharacter(id)
             .then(this.onCharLoaded)
             .catch(this.onError)
@@ -46,7 +52,7 @@ class RandomChar extends Component {
 
     formattedPicture = (picture) => {
         const notPicture = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-        return picture === notPicture ? { objectFit: "contain" } : null
+        return picture === notPicture ? { objectFit: "fill" } : null
     }
 
     render() {

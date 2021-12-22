@@ -8,46 +8,51 @@ class CharList extends Component {
     state = {
         charsList: [],
         loading: true,
-        error: false
+        error: false,
+        newItemLoading: false,
+        offset: 210,
+        charsEnded: false
     }
 
     componentDidMount() {
-        this.marvelService.getAllCharacters()
-            .then(charsList => this.onCharsLoaded(charsList))
-            .catch(this.onError)
+        this.onRequest()
     }
 
     marvelService = new MarvelService()
 
+    onRequest = (offset) => {
+        this.onCharsLoading()
+        this.marvelService.getAllCharacters(offset)
+            .then(this.onCharsLoaded)
+            .catch(this.onError)
+    }
 
-    onCharsLoaded = (charsList) => this.setState({
-        charsList: charsList.map(item => ({ ...item, active: false })),
-        loading: false
-    });
+    onCharsLoading = () => {
+        this.setState({
+            newItemLoading: true,
+        })
+    }
+
+    onCharsLoaded = (newCharsList) => this.setState(({ charsList, offset, charsEnded }) => ({
+        charsList: [...charsList, ...newCharsList],
+        loading: false,
+        newItemLoading: false,
+        offset: offset + 9,
+        charsEnded: newCharsList <= 9
+    }));
 
     onError = () => this.setState({
         loading: false,
         error: true
     })
 
-    onToggleActive = (id) => {
-        return this.setState((prevState) => {
-            return {
-                ...prevState,
-                charsList: prevState.charsList.map(item => item.id === id
-                    ? { ...item, active: !item.active }
-                    : { ...item, active: false }
-                )
-            }
-        })
-    }
-    formattedPicture = (picture, property) => {
+    formattedPicture = (picture) => {
         const notPicture = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-        return picture === notPicture ? { objectFit: property } : null
+        return picture === notPicture ? { objectFit: "fill" } : null
     }
 
     render() {
-        const { charsList, loading, error } = this.state
+        const { charsList, loading, error, offset, newItemLoading, charsEnded } = this.state
         const activeClass = "char__item_selected"
         const spinner = loading && <Spinner/>
         const errorMessage = error && <ErrorMessage/>
@@ -55,13 +60,12 @@ class CharList extends Component {
             <li
                 className={`char__item ${active ? activeClass : null}`}
                 key={id}
-                onClick={() => this.onToggleActive(id)}
-
+                onClick={() => this.props.onCharSelected(id)}
             >
                 <img
                     src={thumbnail}
                     alt={name}
-                    style={this.formattedPicture(thumbnail, "fill")}
+                    style={this.formattedPicture(thumbnail)}
                 />
                 <div className="char__name">{name}</div>
             </li>
@@ -69,7 +73,12 @@ class CharList extends Component {
         return (
             <div className="char__list">
                 {spinner || errorMessage || <ul className="char__grid">{charsListComponent}</ul>}
-                <button className="button button__main button__long">
+                <button
+                    className="button button__main button__long"
+                    disabled={newItemLoading}
+                    onClick={() => this.onRequest(offset)}
+                    style={{ display: charsEnded ? "none" : "block" }}
+                >
                     <div className="inner">load more</div>
                 </button>
             </div>
