@@ -1,5 +1,5 @@
 import './charList.scss';
-import { Component } from "react";
+import React, { Component } from "react";
 import MarvelService from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
@@ -33,7 +33,7 @@ class CharList extends Component {
         })
     }
 
-    onCharsLoaded = (newCharsList) => this.setState(({ charsList, offset, charsEnded }) => ({
+    onCharsLoaded = (newCharsList) => this.setState(({ charsList, offset }) => ({
         charsList: [...charsList, ...newCharsList],
         loading: false,
         newItemLoading: false,
@@ -51,16 +51,29 @@ class CharList extends Component {
         return picture === notPicture ? { objectFit: "fill" } : null
     }
 
+    // Element selection logic
+    itemRefs = [];
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+    focusOnItem = (id) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+    }
+
     render() {
         const { charsList, loading, error, offset, newItemLoading, charsEnded } = this.state
-        const activeClass = "char__item_selected"
         const spinner = loading && <Spinner/>
         const errorMessage = error && <ErrorMessage/>
-        const charsListComponent = charsList.map(({ name, thumbnail, id, active }) => (
+        const charsListComponent = charsList.map(({ name, thumbnail, id}, i) => (
             <li
-                className={`char__item ${active ? activeClass : null}`}
+                className={`char__item`}
                 key={id}
-                onClick={() => this.props.onCharSelected(id)}
+                onClick={() => {
+                    this.props.onCharSelected(id);
+                    this.focusOnItem(i);
+                }}
+                ref={this.setRef}
             >
                 <img
                     src={thumbnail}

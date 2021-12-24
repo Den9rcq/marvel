@@ -4,7 +4,7 @@ import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 
 import decoration from '../../resources/img/vision.png';
-import { Component } from "react";
+import React, { Component } from "react";
 
 class App extends Component {
     state = {
