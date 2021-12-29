@@ -16,8 +16,8 @@ const App = () => {
             <main>
                 <RandomChar/>
                 <div className="char__content">
-                    <CharList onCharSelected={onCharSelected} charId={selectedChar}/>
-                    <CharInfo charId={selectedChar}/>
+                        <CharList onCharSelected={onCharSelected} charId={selectedChar}/>
+                        <CharInfo charId={selectedChar}/>
                 </div>
                 <img className="bg-decoration" src={decoration} alt="vision"/>
             </main>
