@@ -1,75 +1,66 @@
 import './charInfo.scss';
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import MarvelService from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Skeleton from "../skeleton/Skeleton";
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false
-    }
-    marvelService = new MarvelService()
+const CharInfo = ({charId}) => {
+    const [char, setChar] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
 
-    componentDidMount() {
-        this.updateChar()
-    }
+    const marvelService = new MarvelService()
 
-    componentDidUpdate(prevProps) {
-        if (prevProps.charId !== this.props.charId) {
-            this.updateChar()
-        }
-    }
+    useEffect(() => {
+        updateChar()
+    },[])
 
-    updateChar = () => {
-        const { charId } = this.props
+    useEffect(() => {
+        updateChar()
+    },[charId])
+
+    const updateChar = () => {
         if (!charId) return
 
-        this.onCharLoading()
-        this.marvelService.getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError)
+        onCharLoading()
+        marvelService.getCharacter(charId)
+            .then(onCharLoaded)
+            .catch(onError)
     }
 
-    onCharLoaded = (char) => this.setState({
-        char,
-        loading: false
-    });
-
-    onCharLoading = () => {
-        this.setState({
-            loading: true
-        })
+    const onCharLoaded = (char) => {
+        setChar(char)
+        setLoading(false)
     }
 
-    onError = () => this.setState({
-        loading: false,
-        error: true
-    })
+    const onCharLoading = () => {
+        setLoading(true)
+    }
 
-    formattedPicture = (picture) => {
+    const onError = () => {
+        setLoading(false)
+        setError(true)
+    }
+
+    const formattedPicture = (picture) => {
         const notPicture = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
         return picture === notPicture ? { objectFit: "fill" } : null
     }
 
-    render() {
-        const { char, loading, error } = this.state
-        const spinner = loading && <Spinner/>
-        const errorMessage = error && <ErrorMessage/>
-        const content = !(loading || error || !char) && <View char={char} onFormattingPicture={this.formattedPicture}/>
-        const skeleton = !(loading || error || char) && <Skeleton/>
+    const spinner = loading && <Spinner/>
+    const errorMessage = error && <ErrorMessage/>
+    const content = !(loading || error || !char) && <View char={char} onFormattingPicture={formattedPicture}/>
+    const skeleton = !(loading || error || char) && <Skeleton/>
 
-        return (
-            <div className="char__info">
-                {spinner}
-                {errorMessage}
-                {skeleton}
-                {content}
-            </div>
-        )
-    }
+    return (
+        <div className="char__info">
+            {spinner}
+            {errorMessage}
+            {skeleton}
+            {content}
+        </div>
+    )
 }
 
 const View = ({ char, onFormattingPicture }) => {
