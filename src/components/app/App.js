@@ -1,7 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AppHeader from "../appHeader/AppHeader";
-import { ComicsPage, MainPage } from "../pages";
+import { ComicsPage, MainPage, Page404, SingleComicPage } from "../pages";
 
 const App = () => {
 
@@ -9,15 +9,23 @@ const App = () => {
     return (
         <div className="app">
             <Router>
-                    <AppHeader/>
-                    <main>
+                <AppHeader/>
+                <main>
+                    <Switch>
                         <Route exact path="/">
                             <MainPage/>
                         </Route>
-                        <Route path="/comics">
+                        <Route exact path="/comics">
                             <ComicsPage/>
                         </Route>
-                    </main>
+                        <Route exact path="/comics/:comicId">
+                            <SingleComicPage/>
+                        </Route>
+                        <Route path="*">
+                            <Page404/>
+                        </Route>
+                    </Switch>
+                </main>
             </Router>
         </div>
     )
