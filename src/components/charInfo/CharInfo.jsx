@@ -14,8 +14,8 @@ const CharInfo = ({ charId }) => {
     }, [charId])
 
     const updateChar = () => {
-        if (!charId) return
         clearError()
+        if (!charId) return
         getCharacter(charId)
             .then(setChar)
     }

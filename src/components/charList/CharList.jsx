@@ -28,7 +28,7 @@ const CharList = ({ onCharSelected, charId }) => {
         setCharsList(charsList => [...charsList, ...newCharsList])
         setNewItemLoading(false)
         setOffset(offset => offset + 9)
-        setCharsEnded(newCharsList <= 9)
+        setCharsEnded(newCharsList.length < 8)
     };
 
     const formattedPicture = (picture) => {
@@ -40,7 +40,7 @@ const CharList = ({ onCharSelected, charId }) => {
 
     const spinner = loading && !newItemLoading && <Spinner/>
     const errorMessage = error && <ErrorMessage/>
-    const charsListComponent = () => charsList.map(({ name, thumbnail, id }, i) => (
+    const charsListComponent = () => charsList.map(({ name, thumbnail, id }) => (
         <li
             className={`char__item ${activeClass(id)}`}
             key={id}

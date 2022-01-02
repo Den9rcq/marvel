@@ -5,6 +5,7 @@ import CharInfo from "../charInfo/CharInfo";
 
 import decoration from '../../resources/img/vision.png';
 import React, { useState } from "react";
+import ComicsList from "../comicsList/ComicsList";
 
 const App = () => {
     const [selectedChar, setChar] = useState(null)
@@ -14,12 +15,13 @@ const App = () => {
         <div className="app">
             <AppHeader/>
             <main>
-                <RandomChar/>
-                <div className="char__content">
-                        <CharList onCharSelected={onCharSelected} charId={selectedChar}/>
-                        <CharInfo charId={selectedChar}/>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/>
+                {/*<RandomChar/>*/}
+                {/*<div className="char__content">*/}
+                {/*        <CharList onCharSelected={onCharSelected} charId={selectedChar}/>*/}
+                {/*        <CharInfo charId={selectedChar}/>*/}
+                {/*</div>*/}
+                {/*<img className="bg-decoration" src={decoration} alt="vision"/>*/}
+                <ComicsList/>
             </main>
         </div>
     )
